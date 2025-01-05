@@ -63,7 +63,6 @@ mse_mlp = mean_squared_error(y_test, y_pred_mlp)
 rmse_mlp = np.sqrt(mse_mlp)
 print(f"Neural Network (MLP) - MAE: {mae_mlp}, MSE: {mse_mlp}, RMSE: {rmse_mlp}")
 
-# Load the provided grid data
 provided_grid_data = pd.read_csv('provided_grid.csv')
 
 # Define the preprocessor
@@ -76,23 +75,31 @@ preprocessor = ColumnTransformer(
         ('cat', OneHotEncoder(), categorical_features)
     ])
 
+# Define the polynomial regression model
+polynomial_features = PolynomialFeatures(degree=4)
+poly_regressor = LinearRegression()
+
+# Fit the polynomial regression model
+poly_regressor.fit(X_train_poly, y_train)
+
+# Fit the preprocessor with the training data
+preprocessor.fit(X_train)
+
 # Preprocess the provided grid data
 X_provided_grid = provided_grid_data.drop(['traversal_cost'], axis=1, errors='ignore')
-X_provided_grid_processed = preprocessor.fit_transform(X_provided_grid)
+X_provided_grid_processed = preprocessor.transform(X_provided_grid)
 X_provided_grid_poly = polynomial_features.transform(X_provided_grid_processed)
 
-# Predict traversal costs using the existing polynomial model
+# Predict traversal costs using the fitted polynomial model
 estimated_traversal_costs = poly_regressor.predict(X_provided_grid_poly)
 
 # Add the estimated traversal costs to the provided grid data
 provided_grid_data['estimated_traversal_cost'] = estimated_traversal_costs
 
-# Generate 'row' and 'col' columns based on the index
-provided_grid_data['row'] = provided_grid_data.index // provided_grid_data.shape[1]
-provided_grid_data['col'] = provided_grid_data.index % provided_grid_data.shape[1]
-
 # Save the results as Estimated_grid.csv
 provided_grid_data.to_csv('Estimated_grid.csv', index=False)
+
+print("Estimated traversal costs saved to Estimated_grid.csv")
 
 # Calculate the number of rows and columns
 rows = provided_grid_data['row'].max() + 1
@@ -157,24 +164,11 @@ else:
     print("Optimal Path:", path)
 
 # Timing and comparison of algorithms
-start_time = time.time()
-dfs_result = depth_first_search(grid, start, goal)
-dfs_time = time.time() - start_time
-
-start_time = time.time()
-bfs_result = breadth_first_search(grid, start, goal)
-bfs_time = time.time() - start_time
 
 start_time = time.time()
 dijkstra_result = dijkstra(grid, start, goal)
 dijkstra_time = time.time() - start_time
 
-start_time = time.time()
-a_star_result = a_star_search(grid, start, goal)
-a_star_time = time.time() - start_time
 
 # Print the results
-print(f"DFS Result: {dfs_result}, Time: {dfs_time}")
-print(f"BFS Result: {bfs_result}, Time: {bfs_time}")
 print(f"Dijkstra Result: {dijkstra_result}, Time: {dijkstra_time}")
-print(f"A* Result: {a_star_result}, Time: {a_star_time}")
