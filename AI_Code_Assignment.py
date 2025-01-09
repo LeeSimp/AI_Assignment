@@ -21,63 +21,63 @@ preprocessor = ColumnTransformer(
 
 X = data.drop('traversal_cost', axis=1)
 y = data['traversal_cost']
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+xTrain, xTest, yTrain, yTest = train_test_split(X, y, test_size=0.2, random_state=42)
 
-X_train_processed = preprocessor.fit_transform(X_train)
-X_test_processed = preprocessor.transform(X_test)
+xTrainProcessed = preprocessor.fit_transform(xTrain)
+xTestProcessed = preprocessor.transform(xTest)
 
-"""
+
 # Linear regression model
-linear_regressor = LinearRegression()
-linear_regressor.fit(X_train_processed, y_train)
+linearRegressor = LinearRegression()
+linearRegressor.fit(xTrainProcessed, yTrain)
 
-y_pred_lr = linear_regressor.predict(X_test_processed)
-mae_lr = mean_absolute_error(y_test, y_pred_lr)
-mse_lr = mean_squared_error(y_test, y_pred_lr)
+yPredictLinearRegressor = linearRegressor.predict(xTestProcessed)
+mae_lr = mean_absolute_error(yTest, yPredictLinearRegressor)
+mse_lr = mean_squared_error(yTest, yPredictLinearRegressor)
 rmse_lr = np.sqrt(mse_lr)
 print(f"Linear Regression - MAE: {mae_lr}, MSE: {mse_lr}, RMSE: {rmse_lr}") 
-"""
+
 # Polynomial regression model
-polynomial_features = PolynomialFeatures(degree=4)
-X_train_poly = polynomial_features.fit_transform(X_train_processed)
-X_test_poly = polynomial_features.transform(X_test_processed)
+polynomialFeatures = PolynomialFeatures(degree=4)
+xTrainPoly = polynomialFeatures.fit_transform(xTrainProcessed)
+xTestPoly = polynomialFeatures.transform(xTestProcessed)
 
-poly_regressor = LinearRegression()
-poly_regressor.fit(X_train_poly, y_train)
+polyRegressor = LinearRegression()
+polyRegressor.fit(xTrainPoly, yTrain)
 
-y_pred_pr = poly_regressor.predict(X_test_poly)
-mae_pr = mean_absolute_error(y_test, y_pred_pr)
-mse_pr = mean_squared_error(y_test, y_pred_pr)
+yPredictPolyRegressor = polyRegressor.predict(xTestPoly)
+mae_pr = mean_absolute_error(yTest, yPredictPolyRegressor)
+mse_pr = mean_squared_error(yTest, yPredictPolyRegressor)
 rmse_pr = np.sqrt(mse_pr)
 print(f"Polynomial Regression - MAE: {mae_pr}, MSE: {mse_pr}, RMSE: {rmse_pr}")
-"""
+
 # Neural network model
 mlp = MLPRegressor(max_iter=1000, random_state =42, hidden_layer_sizes=(64, 32), activation='relu', solver='adam')
 
 
-mlp.fit(X_train_processed, y_train)
+mlp.fit(xTrainProcessed, yTrain)
 
-y_pred_mlp = mlp.predict(X_test_processed)
-mae_mlp = mean_absolute_error(y_test, y_pred_mlp)
-mse_mlp = mean_squared_error(y_test, y_pred_mlp)
+yPredictMLP = mlp.predict(xTestProcessed)
+mae_mlp = mean_absolute_error(yTest, yPredictMLP)
+mse_mlp = mean_squared_error(yTest, yPredictMLP)
 rmse_mlp = np.sqrt(mse_mlp)
 print(f"Neural Network (MLP) - MAE: {mae_mlp}, MSE: {mse_mlp}, RMSE: {rmse_mlp}")
-"""
-grid_data = pd.read_csv('provided_grid.csv')
+
+gridData = pd.read_csv('provided_grid.csv')
 
 # Preprocess the grid data
-grid_data_processed = preprocessor.transform(grid_data)
+gridDataProcessed = preprocessor.transform(gridData)
 
 # Estimate traversal costs using the polynomial regression model
-grid_data_poly = polynomial_features.transform(grid_data_processed)
-estimated_traversal_costs = poly_regressor.predict(grid_data_poly)
+gridDataPoly = polynomialFeatures.transform(gridDataProcessed)
+estimatedTraversalCosts = polyRegressor.predict(gridDataPoly)
 
 # Save the results
-grid_data['estimated_traversal_cost'] = estimated_traversal_costs
-grid_data.to_csv('Estimated_grid.csv', index=False)
+gridData['estimated_traversal_cost'] = estimatedTraversalCosts
+gridData.to_csv('Estimated_grid.csv', index=False)
 
 # Pathfinding algorithms comparison
-def depth_first_search(grid, start, goal):
+def DepthFirstSearch(grid, start, goal):
     stack = [(start, [start])]
     visited = set()
     count = 0
@@ -89,11 +89,11 @@ def depth_first_search(grid, start, goal):
         if vertex == goal:
             return path
         visited.add(vertex)
-        for neighbor in get_neighbors(grid, vertex):
+        for neighbor in GetNeighbours(grid, vertex):
             stack.append((neighbor, path + [neighbor]))
     return count
 
-def breadth_first_search(grid, start, goal):
+def BreadthFirstSearch(grid, start, goal):
     queue = [(start, [start])]
     visited = set()
     count = 0
@@ -105,11 +105,11 @@ def breadth_first_search(grid, start, goal):
         if vertex == goal:
             return path
         visited.add(vertex)
-        for neighbor in get_neighbors(grid, vertex):
+        for neighbor in GetNeighbours(grid, vertex):
             queue.append((neighbor, path + [neighbor]))
     return count
 
-def dijkstra_algorithm(grid, start, goal):
+def DijkstrasAlgorithm(grid, start, goal):
     queue = [(0, start, [])]
     visited = set()
     count = 0
@@ -122,12 +122,12 @@ def dijkstra_algorithm(grid, start, goal):
         if vertex == goal:
             return path
         visited.add(vertex)
-        for neighbor in get_neighbors(grid, vertex):
+        for neighbor in GetNeighbours(grid, vertex):
             if neighbor not in visited:
                 heapq.heappush(queue, (cost + grid[neighbor], neighbor, path))
     return count
 
-def a_star_search(grid, start, goal):
+def AStarSearch(grid, start, goal):
     def heuristic(a, b):
         return abs(a[0] - b[0]) + abs(a[1] - b[1])
     
@@ -143,13 +143,13 @@ def a_star_search(grid, start, goal):
         if vertex == goal:
             return path
         visited.add(vertex)
-        for neighbor in get_neighbors(grid, vertex):
+        for neighbor in GetNeighbours(grid, vertex):
             if neighbor not in visited:
                 priority = cost + grid[neighbor] + heuristic(neighbor, goal)
                 heapq.heappush(queue, (priority, neighbor, path))
     return count
 
-def get_neighbors(grid, vertex):
+def GetNeighbours(grid, vertex):
     rows, cols = len(grid), len(grid[0])
     x, y = vertex
     neighbors = []
@@ -163,29 +163,29 @@ def get_neighbors(grid, vertex):
         neighbors.append((x, y + 1))
     return neighbors
 
-grid = np.array(grid_data['estimated_traversal_cost']).reshape((20, 20))  # Example grid initialization
+grid = np.array(gridData['estimated_traversal_cost']).reshape((20, 20))  # Example grid initialization
 start = (0, 0)  # Example start position
 goal = (len(grid) - 1, len(grid[0]) - 1)  # Example goal position
 
 # Compare the algorithms
-start_time = time.time()
-dfs_result = depth_first_search(grid, start, goal)
-dfs_time = time.time() - start_time
+startTime = time.time()
+DFSResult = DepthFirstSearch(grid, start, goal)
+DFSTime = time.time() - startTime
 
-start_time = time.time()
-bfs_result = breadth_first_search(grid, start, goal)
-bfs_time = time.time() - start_time
+startTime = time.time()
+BFSResult = BreadthFirstSearch(grid, start, goal)
+BFSTime = time.time() - startTime
 
-start_time = time.time()
-dijkstra_result = dijkstra_algorithm(grid, start, goal)
-dijkstra_time = time.time() - start_time
+startTime = time.time()
+dijkstrasResult = DijkstrasAlgorithm(grid, start, goal)
+dijkstrasTime = time.time() - startTime
 
-start_time = time.time()
-a_star_result = a_star_search(grid, start, goal)
-a_star_time = time.time() - start_time
+startTime = time.time()
+aStarResult = AStarSearch(grid, start, goal)
+aStarTime = time.time() - startTime
 
 # Print the results
-print(f"DFS Result: {dfs_result}, Time: {dfs_time}")
-print(f"BFS Result: {bfs_result}, Time: {bfs_time}")
-print(f"Dijkstra Result: {dijkstra_result}, Time: {dijkstra_time}")
-print(f"A* Result: {a_star_result}, Time: {a_star_time}")
+print(f"DFS Result: {DFSResult}, Time: {DFSTime}")
+print(f"BFS Result: {BFSResult}, Time: {BFSTime}")
+print(f"Dijkstra Result: {dijkstrasResult}, Time: {dijkstrasTime}")
+print(f"A* Result: {aStarResult}, Time: {aStarTime}")
