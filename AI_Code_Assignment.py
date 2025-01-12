@@ -83,16 +83,16 @@ def DepthFirstSearch(grid, start, goal):
     visited = set()
     DFSCount = 0
     while stack:
-        DFSCount += 1
         (vertex, path) = stack.pop()
         if vertex in visited:
             continue
         if vertex == goal:
+            print(f"DFS steps: {DFSCount}")
             return path
         visited.add(vertex)
         for neighbor in GetNeighbours(grid, vertex):
             stack.append((neighbor, path + [neighbor]))
-    print(f"DFS steps: {DFSCount}")
+        DFSCount += 1
     return None
 
 def BreadthFirstSearch(grid, start, goal):
@@ -100,16 +100,16 @@ def BreadthFirstSearch(grid, start, goal):
     visited = set()
     BFSCount = 0
     while queue:
-        BFSCount += 1
         (vertex, path) = queue.pop(0)
         if vertex in visited:
             continue
         if vertex == goal:
+            print(f"BFS steps: {BFSCount}")
             return path
         visited.add(vertex)
         for neighbor in GetNeighbours(grid, vertex):
             queue.append((neighbor, path + [neighbor]))
-    print(f"BFS steps: {BFSCount}")
+        BFSCount += 1
     return None
 
 def DijkstrasAlgorithm(grid, start, goal):
@@ -117,18 +117,18 @@ def DijkstrasAlgorithm(grid, start, goal):
     visited = set()
     DijkstraCount = 0
     while queue:
-        DijkstraCount += 1
         (cost, vertex, path) = heapq.heappop(queue)
         if vertex in visited:
             continue
         path = path + [vertex]
         if vertex == goal:
+            print(f"Dijkstra steps: {DijkstraCount}")
             return path
         visited.add(vertex)
         for neighbor in GetNeighbours(grid, vertex):
             if neighbor not in visited:
                 heapq.heappush(queue, (cost + grid[neighbor], neighbor, path))
-    print(f"Dijkstra steps: {DijkstraCount}")
+        DijkstraCount += 1
     return None
 
 def AStarSearch(grid, start, goal):
@@ -138,19 +138,19 @@ def AStarSearch(grid, start, goal):
     queue = [(0, start, [])]
     visited = set()
     while queue:
-        AStarCount += 1
         (cost, vertex, path) = heapq.heappop(queue)
         if vertex in visited:
             continue
         path = path + [vertex]
         if vertex == goal:
+            print(f"A* steps: {AStarCount}")
             return path
         visited.add(vertex)
         for neighbor in GetNeighbours(grid, vertex):
             if neighbor not in visited:
                 priority = cost + grid[neighbor] + heuristic(neighbor, goal)
                 heapq.heappush(queue, (priority, neighbor, path))
-    print(f"A* steps: {AStarCount}")
+        AStarCount += 1
     return None
 
 def GetNeighbours(grid, vertex):
