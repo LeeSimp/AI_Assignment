@@ -31,11 +31,20 @@ xTestProcessed = preprocessor.transform(xTest)
 linearRegressor = LinearRegression()
 linearRegressor.fit(xTrainProcessed, yTrain)
 
+# Predictions for training data
+yPredictTrainLinearRegressor = linearRegressor.predict(xTrainProcessed)
+mae_train_lr = mean_absolute_error(yTrain, yPredictTrainLinearRegressor)
+mse_train_lr = mean_squared_error(yTrain, yPredictTrainLinearRegressor)
+rmse_train_lr = np.sqrt(mse_train_lr)
+
+# Predictions for test data
 yPredictLinearRegressor = linearRegressor.predict(xTestProcessed)
-mae_lr = mean_absolute_error(yTest, yPredictLinearRegressor)
-mse_lr = mean_squared_error(yTest, yPredictLinearRegressor)
-rmse_lr = np.sqrt(mse_lr)
-print(f"Linear Regression - MAE: {mae_lr}, MSE: {mse_lr}, RMSE: {rmse_lr}") 
+mae_test_lr = mean_absolute_error(yTest, yPredictLinearRegressor)
+mse_test_lr = mean_squared_error(yTest, yPredictLinearRegressor)
+rmse_test_lr = np.sqrt(mse_test_lr)
+
+print(f"Linear Regression - Training Data - MAE: {mae_train_lr}, MSE: {mse_train_lr}, RMSE: {rmse_train_lr}")
+print(f"Linear Regression - Test Data - MAE: {mae_test_lr}, MSE: {mse_test_lr}, RMSE: {rmse_test_lr}")
 
 # Polynomial regression model
 polynomialFeatures = PolynomialFeatures(degree=4)
@@ -45,24 +54,42 @@ xTestPoly = polynomialFeatures.transform(xTestProcessed)
 polyRegressor = LinearRegression()
 polyRegressor.fit(xTrainPoly, yTrain)
 
+# Predictions for training data
+yPredictTrainPolyRegressor = polyRegressor.predict(xTrainPoly)
+mae_train_pr = mean_absolute_error(yTrain, yPredictTrainPolyRegressor)
+mse_train_pr = mean_squared_error(yTrain, yPredictTrainPolyRegressor)
+rmse_train_pr = np.sqrt(mse_train_pr)
+
+# Predictions for test data
 yPredictPolyRegressor = polyRegressor.predict(xTestPoly)
-mae_pr = mean_absolute_error(yTest, yPredictPolyRegressor)
-mse_pr = mean_squared_error(yTest, yPredictPolyRegressor)
-rmse_pr = np.sqrt(mse_pr)
-print(f"Polynomial Regression - MAE: {mae_pr}, MSE: {mse_pr}, RMSE: {rmse_pr}")
+mae_test_pr = mean_absolute_error(yTest, yPredictPolyRegressor)
+mse_test_pr = mean_squared_error(yTest, yPredictPolyRegressor)
+rmse_test_pr = np.sqrt(mse_test_pr)
+
+print(f"Polynomial Regression - Training Data - MAE: {mae_train_pr}, MSE: {mse_train_pr}, RMSE: {rmse_train_pr}")
+print(f"Polynomial Regression - Test Data - MAE: {mae_test_pr}, MSE: {mse_test_pr}, RMSE: {rmse_test_pr}")
 
 # Neural network model
-mlp = MLPRegressor(max_iter=1000, random_state =42, hidden_layer_sizes=(64, 32), activation='relu', solver='adam')
-
+mlp = MLPRegressor(max_iter=1000, random_state=42, hidden_layer_sizes=(64, 32), activation='relu', solver='adam')
 
 mlp.fit(xTrainProcessed, yTrain)
 
-yPredictMLP = mlp.predict(xTestProcessed)
-mae_mlp = mean_absolute_error(yTest, yPredictMLP)
-mse_mlp = mean_squared_error(yTest, yPredictMLP)
-rmse_mlp = np.sqrt(mse_mlp)
-print(f"Neural Network (MLP) - MAE: {mae_mlp}, MSE: {mse_mlp}, RMSE: {rmse_mlp}")
+# Predictions for training data
+yPredictTrainMLP = mlp.predict(xTrainProcessed)
+mae_train_mlp = mean_absolute_error(yTrain, yPredictTrainMLP)
+mse_train_mlp = mean_squared_error(yTrain, yPredictTrainMLP)
+rmse_train_mlp = np.sqrt(mse_train_mlp)
 
+# Predictions for test data
+yPredictMLP = mlp.predict(xTestProcessed)
+mae_test_mlp = mean_absolute_error(yTest, yPredictMLP)
+mse_test_mlp = mean_squared_error(yTest, yPredictMLP)
+rmse_test_mlp = np.sqrt(mse_test_mlp)
+
+print(f"Neural Network - Training Data - MAE: {mae_train_mlp}, MSE: {mse_train_mlp}, RMSE: {rmse_train_mlp}")
+print(f"Neural Network - Test Data - MAE: {mae_test_mlp}, MSE: {mse_test_mlp}, RMSE: {rmse_test_mlp}")
+
+#task 3
 gridData = pd.read_csv('provided_grid.csv')
 
 # Preprocess the grid data
